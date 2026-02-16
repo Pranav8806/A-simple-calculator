@@ -31,7 +31,6 @@ This project demonstrates core front-end development concepts including DOM mani
 1. Clone the repository
 2. Open `CALC.html` in your browser
 3. Use the calculator
-4. 
 
 ## 📂 Project Structure
 
