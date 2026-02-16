@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+
+    <div class="calculator">
+        <div class="title">Calculator</div>
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button class="delete" onclick="deleteDigit()">DEL</button>
+            <button class="scientific" onclick="percentage()">%</button>
+            <button class="operator" onclick="appendOperator('/')">/</button>
+            
+            <button class="scientific" onclick="squareRoot()">√</button>
+            <button class="scientific" onclick="cubeRoot()">∛</button>
+            <button class="scientific" onclick="square()">x²</button>
+            <button class="operator" onclick="appendOperator('*')">×</button>
+            
+            <button class="number" onclick="appendNumber('7')">7</button>
+            <button class="number" onclick="appendNumber('8')">8</button>
+            <button class="number" onclick="appendNumber('9')">9</button>
+            <button class="operator" onclick="appendOperator('-')">-</button>
+            
+            <button class="number" onclick="appendNumber('4')">4</button>
+            <button class="number" onclick="appendNumber('5')">5</button>
+            <button class="number" onclick="appendNumber('6')">6</button>
+            <button class="operator" onclick="appendOperator('+')">+</button>
+            
+            <button class="number" onclick="appendNumber('1')">1</button>
+            <button class="number" onclick="appendNumber('2')">2</button>
+            <button class="number" onclick="appendNumber('3')">3</button>
+            <button class="scientific" onclick="power()">xʸ</button>
+            
+            <button class="number zero" onclick="appendNumber('0')">0</button>
+            <button class="decimal" onclick="appendNumber('.')">.</button>
+            <button class="equals" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let currentValue = '0';
+        let previousValue = '';
+        let operator = '';
+        let shouldResetDisplay = false;
+        let awaitingSecondOperand = false;
+
+        function updateDisplay() {
+            display.textContent = currentValue;
+        }
+
+        function appendNumber(num) {
+            if (shouldResetDisplay) {
+                currentValue = num;
+                shouldResetDisplay = false;
+            } else {
+                if (num === '.' && currentValue.includes('.')) return;
+                currentValue = currentValue === '0' ? num : currentValue + num;
+            }
+            updateDisplay();
+        }
+
+        function appendOperator(op) {
+            if (operator && !shouldResetDisplay) {
+                calculate();
+            }
+            previousValue = currentValue;
+            operator = op;
+            shouldResetDisplay = true;
+        }
+
+        function calculate() {
+            if (!operator || shouldResetDisplay) return;
+            
+            let result;
+            const prev = parseFloat(previousValue);
+            const current = parseFloat(currentValue);
+
+            switch(operator) {
+                case '+':
+                    result = prev + current;
+                    break;
+                case '-':
+                    result = prev - current;
+                    break;
+                case '*':
+                    result = prev * current;
+                    break;
+                case '/':
+                    result = current !== 0 ? prev / current : 'Error';
+                    break;
+                case '^':
+                    result = Math.pow(prev, current);
+                    break;
+                default:
+                    return;
+            }
+
+            currentValue = result.toString();
+            operator = '';
+            previousValue = '';
+            shouldResetDisplay = true;
+            updateDisplay();
+        }
+
+        function clearDisplay() {
+            currentValue = '0';
+            previousValue = '';
+            operator = '';
+            shouldResetDisplay = false;
+            updateDisplay();
+        }
+
+        function deleteDigit() {
+            if (currentValue.length > 1) {
+                currentValue = currentValue.slice(0, -1);
+            } else {
+                currentValue = '0';
+            }
+            updateDisplay();
+        }
+
+        function squareRoot() {
+            const value = parseFloat(currentValue);
+            currentValue = value >= 0 ? Math.sqrt(value).toString() : 'Error';
+            shouldResetDisplay = true;
+            updateDisplay();
+        }
+
+        function cubeRoot() {
+            const value = parseFloat(currentValue);
+            currentValue = Math.cbrt(value).toString();
+            shouldResetDisplay = true;
+            updateDisplay();
+        }
+
+        function square() {
+            const value = parseFloat(currentValue);
+            currentValue = Math.pow(value, 2).toString();
+            shouldResetDisplay = true;
+            updateDisplay();
+        }
+
+        function percentage() {
+            const value = parseFloat(currentValue);
+            currentValue = (value / 100).toString();
+            shouldResetDisplay = true;
+            updateDisplay();
+        }
+
+        function power() {
+            if (operator && !shouldResetDisplay) {
+                calculate();
+            }
+            previousValue = currentValue;
+            operator = '^';
+            shouldResetDisplay = true;
+        }
+
+        // Enhanced keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (e.key >= '0' && e.key <= '9') {
+                appendNumber(e.key);
+                animateKey(e.key);
+            }
+            if (e.key === '.') {
+                appendNumber('.');
+                animateKey('.');
+            }
+            if (e.key === '+') {
+                appendOperator('+');
+                animateKey('+');
+            }
+            if (e.key === '-') {
+                appendOperator('-');
+                animateKey('-');
+            }
+            if (e.key === '*') {
+                appendOperator('*');
+                animateKey('*');
+            }
+            if (e.key === '/') {
+                e.preventDefault();
+                appendOperator('/');
+                animateKey('/');
+            }
+            if (e.key === 'Enter' || e.key === '=') {
+                e.preventDefault();
+                calculate();
+                animateKey('=');
+            }
+            
+            // Clear
+            if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') {
+                clearDisplay();
+                animateKey('C');
+            }
+            
+            // Delete
+            if (e.key === 'Backspace' || e.key === 'Delete') {
+                deleteDigit();
+                animateKey('DEL');
+            }
+            
+            // Scientific functions
+            if (e.key === 's' || e.key === 'S') {
+                squareRoot();
+                animateKey('√');
+            }
+            if (e.key === 'q' || e.key === 'Q') {
+                square();
+                animateKey('x²');
+            }
+            if (e.key === '%') {
+                percentage();
+                animateKey('%');
+            }
+            if (e.key === '^') {
+                power();
+                animateKey('xʸ');
+            }
+        });
+
+        function animateKey(key) {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                if (button.textContent === key || 
+                    (key === '*' && button.textContent === '×') ||
+                    (key === '=' && button.textContent === '=')) {
+                    button.classList.add('key-pressed');
+                    setTimeout(() => {
+                        button.classList.remove('key-pressed');
+                    }, 300);
+                }
+            });
+        }
+
+        // Show keyboard shortcuts on hover
+        const calculator = document.querySelector('.calculator');
+        calculator.addEventListener('mouseenter', () => {
+            console.log('Keyboard shortcuts:');
+            console.log('Numbers: 0-9');
+            console.log('Operators: + - * /');
+            console.log('Calculate: Enter or =');
+            console.log('Clear: Escape or C');
+            console.log('Delete: Backspace or Delete');
+            console.log('Square root: S');
+            console.log('Square: Q');
+            console.log('Percentage: %');
+            console.log('Power: ^');
+        });
+    </script>
+</body>
+</html>
