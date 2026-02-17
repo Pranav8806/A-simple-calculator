@@ -32,7 +32,7 @@ This project demonstrates core front-end development concepts including DOM mani
 2. Open `CALC.html` in your browser
 3. Use the calculator
 
-## 📂 Project Structure
+## Project Structure
 
 ├── CALC.html
 ├── style.css
@@ -40,7 +40,7 @@ This project demonstrates core front-end development concepts including DOM mani
 
 ---
 
-## 🧠 Learning Outcomes
+## Learning Outcomes
 
 - Improved understanding of JavaScript logic
 - Strengthened DOM manipulation skills
@@ -48,5 +48,5 @@ This project demonstrates core front-end development concepts including DOM mani
 
 ---
 
-## 👨‍💻 Author
+##  Author
 Pranav Sharma
